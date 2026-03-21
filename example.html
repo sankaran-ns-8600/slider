@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConnectSlider – Examples</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    h1 { margin-top: 0; }
+    h2 { margin-top: 2em; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; }
+    .section { background: #fff; padding: 20px; margin-bottom: 24px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .slider-wrap { position: relative; margin: 16px 0; }
+    .slider-wrap ul { margin: 0; padding: 0; list-style: none; }
+    .slider-wrap li { padding: 16px; background: #e8e8e8; border: 1px solid #ccc; min-height: 80px; }
+    .controls { margin-top: 12px; }
+    .controls a { display: inline-block; margin-right: 8px; padding: 8px 16px; background: #333; color: #fff; text-decoration: none; border-radius: 4px; }
+    .controls a:hover { background: #555; }
+    .controls a.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    .note { font-size: 0.9em; color: #666; margin-top: 8px; }
+    .note strong { color: #c00; }
+    #blog-next, #blog-prev { font-size: 0; }
+    #blog-next::after { content: 'Next'; font-size: 16px; }
+    #blog-prev::after { content: 'Prev'; font-size: 16px; }
+    #group-next, #group-prev { font-size: 0; }
+    #group-next::after { content: 'Next'; font-size: 16px; }
+    #group-prev::after { content: 'Prev'; font-size: 16px; }
+    #rightclick-next, #rightclick-prev { font-size: 0; }
+    #rightclick-next::after { content: 'Next'; font-size: 16px; }
+    #rightclick-prev::after { content: 'Prev'; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>ConnectSlider – Examples</h1>
+  <p>Native JS carousel (no jQuery). Open <a href="documentation.html">documentation.html</a> for API and options.</p>
+
+  <!-- Blog-style carousel (top posts) -->
+  <div class="section">
+    <h2>1. Blog carousel (top-posts style)</h2>
+    <p>4 visible slides, slideWidth 335, slideMargin 23, external prev/next, no infinite loop, hideControlOnEnd, onSliderLoad / onSlideAfter. <strong>Left-click and drag</strong> (or touch swipe) on the slider to scroll.</p>
+    <div class="slider-wrap" id="blog-container" style="max-width: 1400px;">
+      <div class="controls">
+        <span id="blog-prev"></span>
+        <span id="blog-next"></span>
+      </div>
+      <ul id="blog-slider" style="margin-top: 12px;">
+        <li>Slide 1</li>
+        <li>Slide 2</li>
+        <li>Slide 3</li>
+        <li>Slide 4</li>
+        <li>Slide 5</li>
+        <li>Slide 6</li>
+        <li>Slide 7</li>
+        <li>Slide 8</li>
+      </ul>
+    </div>
+    <p class="note" id="blog-status">—</p>
+  </div>
+
+  <!-- Group-style carousel -->
+  <div class="section">
+    <h2>2. Group carousel (discover style)</h2>
+    <p>5 visible slides, slideWidth 250, slideMargin 0, external prev/next, hideControlOnEnd.</p>
+    <div class="slider-wrap" id="group-container" style="max-width: 1300px;">
+      <div class="controls">
+        <span id="group-prev"></span>
+        <span id="group-next"></span>
+      </div>
+      <ul id="group-slider" style="margin-top: 12px;">
+        <li>Item A</li>
+        <li>Item B</li>
+        <li>Item C</li>
+        <li>Item D</li>
+        <li>Item E</li>
+        <li>Item F</li>
+        <li>Item G</li>
+        <li>Item H</li>
+        <li>Item I</li>
+        <li>Item J</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Right-click test -->
+  <div class="section">
+    <h2>3. Right-click test</h2>
+    <p>Same as blog carousel. <strong>Right-click on Next/Prev or on the slider:</strong> the slider must not move and must not start auto. Only left-click should advance/go back.</p>
+    <div class="slider-wrap" id="rightclick-container" style="max-width: 800px;">
+      <div class="controls">
+        <span id="rightclick-prev"></span>
+        <span id="rightclick-next"></span>
+      </div>
+      <ul id="rightclick-slider" style="margin-top: 12px;">
+        <li>Page 1</li>
+        <li>Page 2</li>
+        <li>Page 3</li>
+        <li>Page 4</li>
+        <li>Page 5</li>
+      </ul>
+    </div>
+    <p class="note" id="rightclick-status">Right-click the buttons or track to verify nothing happens.</p>
+  </div>
+
+  <!-- Minimal: single slide -->
+  <div class="section">
+    <h2>4. Minimal (single visible slide)</h2>
+    <p>minSlides 1, maxSlides 1 – one slide at a time.</p>
+    <div class="slider-wrap" id="minimal-container" style="max-width: 400px;">
+      <div class="controls">
+        <span id="minimal-prev"></span>
+        <span id="minimal-next"></span>
+      </div>
+      <ul id="minimal-slider" style="margin-top: 12px;">
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="connect-slider.js"></script>
+  <script>
+    (function () {
+      // 1. Blog carousel
+      var blogUl = document.getElementById('blog-slider');
+      var blogStatus = document.getElementById('blog-status');
+      if (blogUl) {
+        var blogSlider = ConnectSlider(blogUl, {
+          speed: 500,
+          randomStart: false,
+          slideMargin: 23,
+          slideWidth: 335,
+          controls: true,
+          nextSelector: '#blog-next',
+          prevSelector: '#blog-prev',
+          nextText: '',
+          prevText: '',
+          pager: false,
+          infiniteLoop: false,
+          hideControlOnEnd: true,
+          minSlides: 3,
+          maxSlides: 4,
+          moveSlides: 4,
+          onSliderLoad: function () {
+            if (blogStatus) blogStatus.textContent = 'Loaded. Current slide: ' + (blogSlider.getCurrentSlide() + 1);
+          },
+          onSlideAfter: function () {
+            if (blogStatus) blogStatus.textContent = 'After slide. Current: ' + (blogSlider.getCurrentSlide() + 1);
+          }
+        });
+      }
+
+      // 2. Group carousel
+      var groupUl = document.getElementById('group-slider');
+      if (groupUl) {
+        ConnectSlider(groupUl, {
+          speed: 500,
+          randomStart: false,
+          slideWidth: 250,
+          slideMargin: 0,
+          controls: true,
+          nextSelector: '#group-next',
+          prevSelector: '#group-prev',
+          nextText: '',
+          prevText: '',
+          pager: false,
+          infiniteLoop: false,
+          hideControlOnEnd: true,
+          minSlides: 5,
+          maxSlides: 5,
+          moveSlides: 5
+        });
+      }
+
+      // 3. Right-click test
+      var rcUl = document.getElementById('rightclick-slider');
+      var rcStatus = document.getElementById('rightclick-status');
+      if (rcUl) {
+        var rcSlider = ConnectSlider(rcUl, {
+          speed: 400,
+          slideWidth: 200,
+          slideMargin: 10,
+          minSlides: 2,
+          maxSlides: 3,
+          moveSlides: 2,
+          controls: true,
+          nextSelector: '#rightclick-next',
+          prevSelector: '#rightclick-prev',
+          nextText: '',
+          prevText: '',
+          infiniteLoop: false,
+          hideControlOnEnd: true,
+          onSlideAfter: function () {
+            if (rcStatus) rcStatus.textContent = 'Slide changed (left-click). Current: ' + (rcSlider.getCurrentSlide() + 1);
+          }
+        });
+        rcUl.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+          if (rcStatus) rcStatus.textContent = 'Right-click detected on track – slider did not move.';
+        });
+      }
+
+      // 4. Minimal
+      var minUl = document.getElementById('minimal-slider');
+      if (minUl) {
+        ConnectSlider(minUl, {
+          speed: 400,
+          minSlides: 1,
+          maxSlides: 1,
+          moveSlides: 1,
+          controls: true,
+          nextSelector: '#minimal-next',
+          prevSelector: '#minimal-prev',
+          nextText: 'Next',
+          prevText: 'Prev',
+          infiniteLoop: false,
+          hideControlOnEnd: true
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConnectSlider – Documentation</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; max-width: 900px; line-height: 1.5; }
+    h1 { margin-top: 0; }
+    h2 { margin-top: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; }
+    h3 { margin-top: 1em; }
+    table { border-collapse: collapse; width: 100%; margin: 0.5em 0; }
+    th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #f0f0f0; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+    pre { background: #f5f5f5; padding: 12px; overflow-x: auto; border-radius: 4px; }
+    .note { background: #fffbe6; border: 1px solid #eee; padding: 10px; margin: 10px 0; border-radius: 4px; }
+    ul { margin: 0.5em 0; padding-left: 1.5em; }
+  </style>
+</head>
+<body>
+  <h1>ConnectSlider – Documentation</h1>
+  <p>Native JavaScript carousel/slider (no jQuery). Replaces bxslider with the same API subset and right-click safety.</p>
+  <p><a href="example.html">Open example.html</a> to see all use cases (blog carousel, group carousel, right-click test, minimal).</p>
+
+  <h2>Overview</h2>
+  <ul>
+    <li>Horizontal carousel with configurable visible slides, slide width, margin, and move step.</li>
+    <li><strong>Click and drag</strong> (or touch swipe) to scroll the slider; release to snap or advance to next/prev if drag exceeds threshold.</li>
+    <li>Optional prev/next controls; can be placed in external elements via <code>nextSelector</code> / <code>prevSelector</code>.</li>
+    <li>Optional pager (not shown in current examples).</li>
+    <li>Callbacks: <code>onSliderLoad</code>, <code>onSlideBefore</code>, <code>onSlideAfter</code>.</li>
+    <li><strong>Right-click safety:</strong> Only left-clicks (and touch) trigger navigation. Right-click on controls or track does not move the slider or start auto.</li>
+  </ul>
+
+  <h2>Usage</h2>
+  <p>Pass the list element (e.g. <code>&lt;ul&gt;</code>) and an options object. The returned instance is also stored on the element as <code>element._connectSlider</code>.</p>
+  <pre>var listEl = document.querySelector('#my-slider');
+var slider = ConnectSlider(listEl, {
+  slideWidth: 335,
+  slideMargin: 23,
+  minSlides: 3,
+  maxSlides: 4,
+  moveSlides: 4,
+  nextSelector: '#my-next',
+  prevSelector: '#my-prev',
+  hideControlOnEnd: true,
+  infiniteLoop: false,
+  onSliderLoad: function () { console.log('ready'); },
+  onSlideAfter: function () { console.log('slide changed'); }
+});
+
+// Later: destroy or navigate
+slider.goToNextSlide();
+slider.destroySlider();
+
+// Or get instance from element
+var same = listEl._connectSlider;</pre>
+
+  <h2>Options</h2>
+  <table>
+    <thead>
+      <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>mode</code></td><td>string</td><td>'horizontal'</td><td>'horizontal' or 'vertical'.</td></tr>
+      <tr><td><code>slideSelector</code></td><td>string</td><td>''</td><td>CSS selector for slide items; empty = direct children.</td></tr>
+      <tr><td><code>infiniteLoop</code></td><td>boolean</td><td>true</td><td>Loop slides (clone leading/trailing).</td></tr>
+      <tr><td><code>hideControlOnEnd</code></td><td>boolean</td><td>false</td><td>Disable prev on first page, next on last (when not infinite).</td></tr>
+      <tr><td><code>speed</code></td><td>number</td><td>500</td><td>Transition duration in ms.</td></tr>
+      <tr><td><code>easing</code></td><td>string</td><td>null</td><td>CSS easing (when useCSS is true).</td></tr>
+      <tr><td><code>slideMargin</code></td><td>number</td><td>0</td><td>Margin between slides (px).</td></tr>
+      <tr><td><code>startSlide</code></td><td>number</td><td>0</td><td>Initial page index (0-based).</td></tr>
+      <tr><td><code>randomStart</code></td><td>boolean</td><td>false</td><td>Start on a random page.</td></tr>
+      <tr><td><code>useCSS</code></td><td>boolean</td><td>true</td><td>Use CSS transform for transitions.</td></tr>
+      <tr><td><code>responsive</code></td><td>boolean</td><td>true</td><td>Listen to window resize and redraw.</td></tr>
+      <tr><td><code>wrapperClass</code></td><td>string</td><td>'bx-wrapper'</td><td>Class on outer wrapper (bxSlider-compatible).</td></tr>
+      <tr><td><code>controls</code></td><td>boolean</td><td>true</td><td>Show prev/next controls.</td></tr>
+      <tr><td><code>nextText</code></td><td>string</td><td>'Next'</td><td>Text for next button.</td></tr>
+      <tr><td><code>prevText</code></td><td>string</td><td>'Prev'</td><td>Text for prev button.</td></tr>
+      <tr><td><code>nextSelector</code></td><td>string</td><td>null</td><td>Selector for container to append next button (e.g. '#id-next').</td></tr>
+      <tr><td><code>prevSelector</code></td><td>string</td><td>null</td><td>Selector for container to append prev button (e.g. '#id-prev').</td></tr>
+      <tr><td><code>pager</code></td><td>boolean</td><td>false</td><td>Show pager.</td></tr>
+      <tr><td><code>buildPager</code></td><td>function</td><td>null</td><td>Optional custom pager builder (index) → content.</td></tr>
+      <tr><td><code>minSlides</code></td><td>number</td><td>1</td><td>Minimum visible slides (carousel).</td></tr>
+      <tr><td><code>maxSlides</code></td><td>number</td><td>1</td><td>Maximum visible slides (carousel).</td></tr>
+      <tr><td><code>moveSlides</code></td><td>number</td><td>0</td><td>Slides to move per step; 0 = auto (match visible).</td></tr>
+      <tr><td><code>slideWidth</code></td><td>number</td><td>0</td><td>Fixed slide width (px); 0 = full viewport for single slide.</td></tr>
+      <tr><td><code>onSliderLoad</code></td><td>function</td><td>no-op</td><td>Called when slider is ready (currentIndex).</td></tr>
+      <tr><td><code>onSlideBefore</code></td><td>function</td><td>no-op</td><td>Called before transition (slideEl, oldIndex, newIndex). Return false to cancel.</td></tr>
+      <tr><td><code>onSlideAfter</code></td><td>function</td><td>no-op</td><td>Called after transition (slideEl, oldIndex, newIndex).</td></tr>
+      <tr><td><code>touchEnabled</code></td><td>boolean</td><td>true</td><td>Enable click-and-drag (mouse) and touch swipe to scroll the slider.</td></tr>
+      <tr><td><code>swipeThreshold</code></td><td>number</td><td>50</td><td>Min drag distance (px) to go to next/prev on release; otherwise snap back.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>API (instance methods)</h2>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>goToSlide(index)</code></td><td>Go to page index (0-based).</td></tr>
+      <tr><td><code>goToNextSlide()</code></td><td>Next page.</td></tr>
+      <tr><td><code>goToPrevSlide()</code></td><td>Previous page.</td></tr>
+      <tr><td><code>getCurrentSlide()</code></td><td>Current page index.</td></tr>
+      <tr><td><code>getCurrentSlideElement()</code></td><td>First visible slide element (or null).</td></tr>
+      <tr><td><code>getSlideElement(index)</code></td><td>Slide element at index (original children).</td></tr>
+      <tr><td><code>getSlideCount()</code></td><td>Number of slides (original).</td></tr>
+      <tr><td><code>redrawSlider()</code></td><td>Recalc widths and position (e.g. after resize).</td></tr>
+      <tr><td><code>destroySlider()</code></td><td>Remove wrapper/viewport, restore styles, unbind; set <code>element._connectSlider = null</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Callbacks</h2>
+  <ul>
+    <li><code>onSliderLoad(currentIndex)</code> – Fired once when the slider is ready. <code>this</code> is the list element.</li>
+    <li><code>onSlideBefore(slideElement, oldIndex, newIndex)</code> – Before transition. Return <code>false</code> to cancel.</li>
+    <li><code>onSlideAfter(slideElement, oldIndex, newIndex)</code> – After transition. <code>this</code> is the list element.</li>
+  </ul>
+
+  <h2>Right-click and accessibility</h2>
+  <p>Only <strong>left-clicks</strong> (and touch, where <code>button</code> is undefined) trigger prev/next or pager. Right-click (and middle-click) are ignored and do not move the slider or start auto. This avoids the issue where right-click could previously cause the slider to move or auto-start after the context menu closed.</p>
+
+  <h2>Browser support</h2>
+  <p>The plugin uses standard DOM and JavaScript APIs and works in all modern browsers and older ones that support the following:</p>
+  <ul>
+    <li><strong>Supported:</strong> Chrome, Firefox, Safari, Edge (all current versions), IE11, IE10. Mobile browsers (iOS Safari, Chrome Android, etc.) are supported. Touch drag and mouse drag work where the browser supports them.</li>
+    <li><strong>APIs used:</strong> <code>addEventListener</code>, <code>classList</code>, <code>querySelector</code> / <code>querySelectorAll</code>, <code>requestAnimationFrame</code>, CSS <code>transform</code> and <code>transition</code> (with vendor prefixes where needed). The script detects the correct transform prefix (WebKit, ms, Moz, O) for animations.</li>
+    <li><strong>Older browsers:</strong> If the browser does not support the <code>passive</code> option for touch events, the plugin falls back to adding listeners without that option so it does not throw. IE9 and below are not supported (no <code>classList</code> or <code>requestAnimationFrame</code> in IE9; no <code>transitionend</code>).</li>
+  </ul>
+  <p>So the plugin can be used in all browsers that meet the above (effectively IE10+ and all modern desktop and mobile browsers).</p>
+
+  <h2>Integration into your project</h2>
+  <div class="note">
+    <strong>Including ConnectSlider in the main project</strong><br>
+    Copy <code>connect-slider.js</code> into your app (e.g. <code>webapps/Connect/js/connect-slider.js</code>). Load it instead of <code>jquery.bxslider.min.js</code>. Then update the two call sites (<code>connect.blog.js</code> and <code>connect.group.js</code>) to use the native API:
+    <ul>
+      <li>Replace <code>$slideQty.bxSlider(options)</code> with <code>ConnectSlider($slideQty[0], options)</code> (or pass the DOM element from your list).</li>
+      <li>Replace <code>$container.data('bxSlider')</code> with the stored instance (e.g. store the return value of <code>ConnectSlider(...)</code> on the container: <code>container._connectSlider = slider</code>, or get it from the list element: <code>listElement._connectSlider</code>).</li>
+      <li>Call <code>slider.destroySlider()</code> as before when re-binding.</li>
+    </ul>
+    No jQuery is required for the slider itself.
+  </div>
+</body>
+</html>
