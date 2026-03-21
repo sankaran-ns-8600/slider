@@ -1,4 +1,4 @@
-# ConnectSlider
+# JS Slider
 
 Native JavaScript carousel/slider (no jQuery). Drop-in replacement for bxslider with the same API subset and **right-click safety**: only left-clicks and touch trigger navigation; right-click does not move the slider or start auto.
 
